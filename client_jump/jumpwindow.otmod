@@ -1,0 +1,9 @@
+Module
+  name: client_jump
+  description: Create the jump minigame window
+  author: Hannabellz
+  website: www.hannahkloss.com
+  sandboxed: true
+  scripts: [ jumpwindow ]
+  @onLoad: init()
+  @onUnload: terminate()

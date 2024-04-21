@@ -1,0 +1,13 @@
+MainWindow
+  id: jumpMinigame
+  size: 300 300
+
+  Button
+    id: jumpButton
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin.right: 0
+    !text: tr('Jump!')
+    width:60
+    height:20
+    @onClick: modules.client_jump.jump()
