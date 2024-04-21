@@ -1,7 +1,7 @@
 --IMPROVEMENT
-[[In the case that there is no reason for the 1 second delay 
-(seeing as it could add up over time), we could just call releaseStorage without
-a scheduled event]]
+--[[In the case that there is no reason for the 1 second delay 
+(seeing as it could add up over time, especially when many people are logging out), 
+we could just call releaseStorage without a scheduled event]]
 
 function onLogout(player)
   if player:getStorageValue(1000) == 1 then
@@ -10,13 +10,13 @@ function onLogout(player)
   return true
 end
 --FIX
-[[However, if the 1 second delay was wanted, addEvent is no longer responsible
-for handling events like these. It doesn't even have a 'delay' anymore. We would
-want to use scheduleEvent]]
+--[[However, if the 1 second delay was wanted, and we were doing something on the
+client side, addEvent is no longer the function to handle matters like these. 
+It doesn't have a 'delay' like when on the server. We would want to use scheduleEvent]]
 
 function onLogout(player)
   if player:getStorageValue(1000) == 1 then
-    scheduleEvent(releaseStorage, 1000, player)
+    scheduleEvent(releaseStorage(player), 1000)
   end
   return true
 end
