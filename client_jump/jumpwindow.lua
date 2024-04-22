@@ -10,12 +10,16 @@ function init()
 end
 
 local function acrossScreen() --the function responsible for moving the jump button across the modal window.
-  marginRight = marginRight+2.5 --every time it gets called move 2.5 units away from the right margin
-  jumpButton:setMarginRight(marginRight)
-  if marginRight<maxDist then 
-	cancel = scheduleEvent(acrossScreen,100) --every 100 ms, call acrossScreen to keep moving
+  if jumpWindow then
+    marginRight = marginRight+2.5 --every time it gets called move 2.5 units away from the right margin
+    jumpButton:setMarginRight(marginRight)
+    if marginRight<maxDist then 
+	  cancel = scheduleEvent(acrossScreen,100) --every 100 ms, call acrossScreen to keep moving
+    else
+	  jump() --if it hits the left edge of the modal, go right to jump (which also gets called when jumpButton is clicked, as per the OTUI file)
+    end
   else
-	jump() --if it hits the left edge of the modal, go right to jump (which also gets called when jumpButton is clicked, as per the OTUI file)
+    removeEvent(cancel) --if things have been unitialized, don't want to try referencing/calling functions on nil
   end
 end
 
@@ -23,25 +27,35 @@ function loadJump()
   if not jumpWindow then
     jumpWindow=g_ui.displayUI('jumpbuttonmodal')
     jumpButton=jumpWindow:getChildById('jumpButton')
+	jumpButton:setMarginRight(0) --makes sure to start the button at the far right of the window
+    scheduleEvent(acrossScreen,100)
   else
-	jumpButton:destroy() --if you want to keep playing the main game, you can close the window the same way it was opened pressing '1'
-    jumpWindow:destroy()
+	terminate() --if you want to keep playing the main game, you can close the window the same way it was opened pressing '1'
   end
-  jumpButton:setMarginRight(0) --makes sure to start the button at the far right of the window
-  scheduleEvent(acrossScreen,100)
 end
 
 function jump()
-  marginTop = math.random(0,maxDist) --random distance from top for the button to jump to when it's been clicked/reached the left side of the modal
-  jumpButton:setMarginTop(marginTop)
-  jumpButton:setMarginRight(0) --start from right side of the modal again
-  marginRight=0
-  removeEvent(cancel) --removes any previously scheduled events before starting the process again
-  scheduleEvent(acrossScreen,100)
+  if jumpWindow then
+    marginTop = math.random(0,maxDist) --random distance from top for the button to jump to when it's been clicked/reached the left side of the modal
+    jumpButton:setMarginTop(marginTop)
+    jumpButton:setMarginRight(0) --start from right side of the modal again
+    marginRight=0
+    removeEvent(cancel) --removes any previously scheduled events before starting the process again
+    scheduleEvent(acrossScreen,100)
+  else
+    removeEvent(cancel)
+  end
 end
 
-function terminate()
+function terminate() --cleanup when all set
+  removeEvent(cancel)
+  local marginRight = nil
+  local marginTop = nil
+  local maxDist = nil
+  local cancel = nil
   jumpButton:destroy()
   jumpWindow:destroy()
+  jumpWindow = nil
+  jumpButton = nil
   g_keyboard.unbindKeyDown('1')
 end
