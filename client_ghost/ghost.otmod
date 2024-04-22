@@ -1,0 +1,9 @@
+Module
+  name: client_ghost
+  description: Give a person the ability to strafe with a trailing effect.
+  author: Hannabellz
+  website: www.hannahkloss.com
+  sandboxed: true
+  scripts: [ ghost ]
+  @onLoad: init()
+  @onUnload: terminate()
